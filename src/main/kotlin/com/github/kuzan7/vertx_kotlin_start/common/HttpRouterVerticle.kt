@@ -7,8 +7,17 @@ import io.vertx.ext.web.RoutingContext
 
 abstract class HttpRouterVerticle : EnhanceCoroutineVerticle(), RouterRegister {
 
+  /**
+   * 这块怎么保证HttpRouterVerticle的子类都在BaseHttpServerVerticle执行前执行完成
+   */
   override suspend fun start() {
+    doInit()
     RouterRegistry.instance.register(this)
+    println(Thread.currentThread().name)
+  }
+
+  open suspend fun doInit(){
+
   }
 
   override fun register(router: Router) {

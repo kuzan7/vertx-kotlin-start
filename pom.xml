@@ -130,6 +130,18 @@
       <scope>test</scope>
     </dependency>
 
+    <!--mysql-->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-mysql-postgresql-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.15</version>
+    </dependency>
+    <!--mysql-->
+
   </dependencies>
 
   <build>

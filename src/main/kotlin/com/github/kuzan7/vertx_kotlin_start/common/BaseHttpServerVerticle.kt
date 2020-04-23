@@ -6,6 +6,7 @@ import io.vertx.kotlin.core.http.listenAwait
 class BaseHttpServerVerticle : EnhanceCoroutineVerticle() {
 
   override suspend fun start() {
+    println(Thread.currentThread().name)
     val httpServer = vertx.createHttpServer()
 
     httpServer.exceptionHandler { it.printStackTrace() }

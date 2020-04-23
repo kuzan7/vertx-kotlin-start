@@ -6,6 +6,8 @@ data class RestResult(var code: String = "0", var data: Any? = null, var message
     fun ok() = RestResult()
 
     fun fail() = RestResult("1")
+
+    fun fail(message: String) = RestResult("1", message)
   }
 
 }
