@@ -10,6 +10,7 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.sql.ResultSet
 import io.vertx.ext.sql.SQLClient
+import io.vertx.ext.sql.UpdateResult
 import io.vertx.ext.web.RoutingContext
 import io.vertx.kotlin.coroutines.awaitEvent
 import io.vertx.kotlin.coroutines.awaitResult
@@ -17,11 +18,11 @@ import io.vertx.kotlin.coroutines.awaitResult
 /**
  * 登录
  *
- * curl -XPOST -d '{"userName":"zs","password":"111111"}' http://localhost:8080/login
+ *  curl -XPOST -d '{"userName":"lala","password":"111111"}' http://localhost:8081/register
  */
-class LoginVerticle : HttpRouterVerticle() {
+class RegisterVerticle : HttpRouterVerticle() {
 
-  override fun path() = "/login"
+  override fun path() = "/register"
 
   override fun httpMethod() = HttpMethod.POST
 
@@ -42,12 +43,22 @@ class LoginVerticle : HttpRouterVerticle() {
     password = PasswordUtil.encodePassword(password, userName)
 
     var result = awaitResult<ResultSet> {
-      dbClient.queryWithParams("select 1 from login where user_name = ? and password = ?",
-        JsonArray().add(userName).add(password), it)
+      dbClient.queryWithParams("select 1 from login where user_name = ?",
+        JsonArray().add(userName), it)
     }
 
-    if(result.rows.size == 0){
-      return RestResult.fail("用户名或密码错误")
+    if(result.rows.size != 0){
+      return RestResult.fail("用户名已存在")
+    }
+
+    val insertResult = awaitResult<UpdateResult> {
+      dbClient.updateWithParams("insert into login(user_name, password, create_time) values (?, ?, ?)",
+        JsonArray().add(userName).add(password).add(System.currentTimeMillis().also { println(it) }),
+        it)
+    }
+
+    if(insertResult.updated == 0){
+      return RestResult.fail("db异常，注册失败")
     }
 
     return RestResult.ok()
